@@ -1,4 +1,4 @@
-import { PaystackProvider } from './src/index';
+import { PaystackProvider } from '../src/index';
 import https from 'https';
 
 // Mock the https module

@@ -7,9 +7,21 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsup",
-    "test": "jest"
+    "test": "jest",
+    "prepack": "npmignore --auto"
   },
-  "keywords": [],
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "payment",
+    "stripe",
+    "paystack",
+    "nodejs",
+    "payment-gateway"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/Nwafor6/node-pay.git"
@@ -22,6 +34,7 @@
   "dependencies": {
     "@types/node": "^22.1.0",
     "dotenv": "^16.4.5",
+    "npmignore": "^0.3.1",
     "stripe": "^16.6.0",
     "ts-node": "^10.9.2",
     "tsup": "^8.2.4"

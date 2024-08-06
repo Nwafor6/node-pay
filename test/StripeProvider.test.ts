@@ -1,4 +1,4 @@
-import { StripeProvider } from './src';
+import { StripeProvider } from '../src';
 import Stripe from 'stripe';
 
 // Mock the entire Stripe module
