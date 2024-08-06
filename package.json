@@ -1,7 +1,7 @@
 {
   "name": "node-pay",
-  "version": "0.0.0",
-  "description": "",
+  "version": "1.0.0",
+  "description": "A flexible Node.js package for seamless integration with multiple payment gateways",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
