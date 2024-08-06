@@ -1,11 +1,11 @@
 
 ---
 
-# node-pay
+# node-paykit
 
 ## Introduction
 
-**node-pay** is a flexible Node.js package designed for seamless integration with multiple payment gateways, such as Stripe and Paystack (with more gateways planned). This package allows you to switch between different payment providers without changing complex settings in your codebase.
+**node-paykit** is a flexible Node.js package designed for seamless integration with multiple payment gateways, such as Stripe and Paystack (with more gateways planned). This package allows you to switch between different payment providers without changing complex settings in your codebase.
 
 ## Features
 
@@ -19,13 +19,13 @@
 To install the package, use npm or yarn:
 
 ```bash
-npm install node-pay
+npm install node-paykit
 ```
 
 or
 
 ```bash
-yarn add node-pay
+yarn add node-paykit
 ```
 
 ## Usage
@@ -37,7 +37,7 @@ yarn add node-pay
 **JavaScript Example:**
 
 ```javascript
-const { PaymentGateway } = require("node-pay"); // Ensure you are importing the class correctly
+const { PaymentGateway } = require("node-paykit"); // Ensure you are importing the class correctly
 require("dotenv").config();
 
 const stripeProvider = new PaymentGateway('stripe', process.env.STRIPE_SECRET_KEY); // Use 'new' to instantiate the class
@@ -109,7 +109,7 @@ retrieveSinglePayment();
 **TypeScript Example:**
 
 ```typescript
-import { PaymentGateway } from "node-pay";
+import { PaymentGateway } from "node-paykit";
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -194,7 +194,7 @@ retrieveSinglePayment();
 **JavaScript Example:**
 
 ```javascript
-const { PaymentGateway } = require("node-pay"); // Ensure you are importing the class correctly
+const { PaymentGateway } = require("node-paykit"); // Ensure you are importing the class correctly
 require("dotenv").config();
 
 const paystackProvider = new PaymentGateway('paystack', process.env.PAYSTACK_SECRET_KEY); // Use 'new' to instantiate the class
@@ -257,7 +257,7 @@ const paystackProvider = new PaymentGateway('paystack', process.env.PAYSTACK_SEC
 **TypeScript Example:**
 
 ```typescript
-import { PaymentGateway } from "node-pay";
+import { PaymentGateway } from "node-paykit";
 import * as dotenv from 'dotenv';
 dotenv.config();
 
