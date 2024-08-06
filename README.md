@@ -34,64 +34,170 @@ yarn add node-pay
 
 1. **Stripe Provider**
 
-```typescript
-import { StripeProvider } from 'node-pay';
-
-const stripe = new StripeProvider('your-stripe-api-key');
-
-async function processPayment() {
-  const payload = {
-    payment_method_types: ['card'],
-    line_items: [
-      {
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: 'T-shirt',
-          },
-          unit_amount: 2000,
-        },
-        quantity: 1,
-      },
-    ],
-    mode: 'payment',
-    success_url: 'https://example.com/success',
-    cancel_url: 'https://example.com/cancel',
-  };
-
-  const payment = await stripe.createPayment(payload);
-  console.log(payment);
-}
-```
-
-2. **Paystack Provider**
-
-```typescript
-import { PaystackProvider } from 'node-pay';
-
-const paystack = new PaystackProvider('your-paystack-api-key');
-
-async function processPayment() {
-  const payload = {
-    email: 'customer@example.com',
-    amount: 2000,
-    currency: 'NGN',
-  };
-
-  const payment = await paystack.createPayment(payload);
-  console.log(payment);
-}
-```
-
-### JavaScript Example
-
-Here’s how you can use the `node-pay` package in a JavaScript application:
+**JavaScript Example:**
 
 ```javascript
 const { PaymentGateway } = require("node-pay"); // Ensure you are importing the class correctly
 require("dotenv").config();
 
-const paystackProvider = new PaymentGateway("paystack", process.env.PAYSTACK_SECRET_KEY); // Use 'new' to instantiate the class
+const stripeProvider = new PaymentGateway('stripe', process.env.STRIPE_SECRET_KEY); // Use 'new' to instantiate the class
+
+async function runPayment() {
+    const payload = {
+        success_url: 'https://example.com/success',
+        cancel_url: 'https://example.com/cancel',
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: 'Sample Product',
+              },
+              unit_amount: 2000,
+            },
+            quantity: 2,
+          },
+        ],
+        mode: 'payment',
+    };
+    try {
+        const payment = await stripeProvider.createPayment(payload);
+        console.log("Payment reference:", payment);
+    } catch (error) {
+        console.error("Error creating payment:", error);
+    }
+}
+
+async function listPayments() {
+    const params = { limit: 3 };
+    try {
+        const payments = await stripeProvider.listPayments(params);
+        console.log("Payment list:", payments);
+    } catch (error) {
+        console.error("Error listing payments:", error);
+    }
+}
+
+async function retrieveSinglePayment() {
+    const transId = "cs_test_a1O7BLn85hx512NIS3zfI2AQqNpvRcgTOAwMcLyMOtWE48mpjAGzZjiUzm";
+    try {
+        const payment = await stripeProvider.retrieveSinglePayment(transId);
+        console.log("Payment details:", payment);
+    } catch (error) {
+        console.error("Error retrieving payment:", error);
+    }
+}
+
+async function verifyPayment() {
+    const transId = "cs_test_a1O7BLn85hx512NIS3zfI2AQqNpvRcgTOAwMcLyMOtWE48mpjAGzZjiUzm";
+    try {
+        const payment = await stripeProvider.verifyPayment(transId);
+        console.log("Payment verification:", payment);
+    } catch (error) {
+        console.error("Error verifying payment:", error);
+    }
+}
+
+// Call the functions
+runPayment();
+verifyPayment();
+listPayments();
+retrieveSinglePayment();
+```
+
+**TypeScript Example:**
+
+```typescript
+import { PaymentGateway } from "node-pay";
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+const stripeKey = process.env.STRIPE_SECRET_KEY;
+if (!stripeKey) {
+  throw new Error("STRIPE_SECRET_KEY is not set in the environment variables");
+}
+
+// Initiate your payment provider (in this case, Stripe)
+const provider = new PaymentGateway('stripe', stripeKey);
+
+async function runPayment() {
+    const payload = {
+        success_url: 'https://example.com/success',
+        cancel_url: 'https://example.com/cancel',
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: 'Sample Product',
+              },
+              unit_amount: 2000,
+            },
+            quantity: 2,
+          },
+        ],
+        mode: 'payment',
+    };
+    // For more information and payload details, see the official Stripe docs https://docs.stripe.com/api/checkout/sessions/create
+    try {
+        const payment = await provider.createPayment(payload);
+        console.log("Payment reference:", payment);
+    } catch (error) {
+        console.error("Error creating payment:", (error as Error).message);
+    }
+}
+
+async function listPayments() {
+    // For more info about the params to pass, see the official docs https://docs.stripe.com/api/checkout/sessions/list
+    const payload2 = { limit: 3 };
+    try {
+        const payments = await provider.listPayments(payload2);
+        console.log("Payment list:", payments);
+    } catch (error) {
+        console.error("Error listing payments:", (error as Error).message);
+    }
+}
+
+async function retrieveSinglePayment() {
+    // For more info about verification of payment, see https://docs.stripe.com/api/checkout/sessions/retrieve
+    const transId = "cs_test_a1O7BLn85hx512NIS3zfI2AQqNpvRcgTOAwMcLyMOtWE48mpjAGzZjiUzm";
+    try {
+        const payment = await provider.retrieveSinglePayment(transId);
+        console.log("Payment details:", payment);
+    } catch (error) {
+        console.error("Error retrieving payment:", (error as Error).message);
+    }
+}
+
+async function verifyPayment() {
+    // For more info about verifying payment, see https://docs.stripe.com/api/checkout/sessions/retrieve
+    const transId = "cs_test_a1O7BLn85hx512NIS3zfI2AQqNpvRcgTOAwMcLyMOtWE48mpjAGzZjiUzm";
+    try {
+        const payment = await provider.verifyPayment(transId);
+        console.log("Payment verification:", payment);
+    } catch (error) {
+        console.error("Error verifying payment:", (error as Error).message);
+    }
+}
+
+// Call the functions
+runPayment();
+verifyPayment();
+listPayments();
+retrieveSinglePayment();
+```
+
+2. **Paystack Provider**
+
+**JavaScript Example:**
+
+```javascript
+const { PaymentGateway } = require("node-pay"); // Ensure you are importing the class correctly
+require("dotenv").config();
+
+const paystackProvider = new PaymentGateway('paystack', process.env.PAYSTACK_SECRET_KEY); // Use 'new' to instantiate the class
 
 (async () => {
     const payload = {
@@ -102,7 +208,7 @@ const paystackProvider = new PaymentGateway("paystack", process.env.PAYSTACK_SEC
     };
     try {
         const createPayment = await paystackProvider.createPayment(payload);
-        console.log(createPayment);
+        console.log("Payment reference:", createPayment);
     } catch (error) {
         console.error("Error creating payment:", error);
     }
@@ -113,7 +219,7 @@ const paystackProvider = new PaymentGateway("paystack", process.env.PAYSTACK_SEC
     const reference = "i3mg37nrys";
     try {
         const verifyPayment = await paystackProvider.verifyPayment(reference);
-        console.log(verifyPayment);
+        console.log("Payment verification:", verifyPayment);
     } catch (error) {
         console.error("Error verifying payment:", error);
     }
@@ -130,7 +236,7 @@ const paystackProvider = new PaymentGateway("paystack", process.env.PAYSTACK_SEC
     };
     try {
         const listPayments = await paystackProvider.listPayments(params);
-        console.log(listPayments);
+        console.log("Payment list:", listPayments);
     } catch (error) {
         console.error("Error listing payments:", error);
     }
@@ -141,137 +247,128 @@ const paystackProvider = new PaymentGateway("paystack", process.env.PAYSTACK_SEC
     const tranId = "3806666186";
     try {
         const retrieveSinglePayment = await paystackProvider.retrieveSinglePayment(tranId);
-        console.log(retrieveSinglePayment);
+        console.log("Payment details:", retrieveSinglePayment);
     } catch (error) {
         console.error("Error retrieving payment:", error);
     }
 })();
 ```
 
-### Verifying Payments
+**TypeScript Example:**
 
 ```typescript
-async function verifyPayment(paymentId: string) {
-  const isVerified = await stripe.verifyPayment(paymentId);
-  console.log(isVerified);
+import { PaymentGateway } from "node-pay";
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+const paystackKey = process.env.PAYSTACK_SECRET_KEY;
+if (!paystackKey) {
+  throw new Error("PAYSTACK_SECRET_KEY is not set in the environment variables");
 }
-```
 
-### Listing Payments
+// Initiate your payment provider (in this case, Paystack)
+const provider = new PaymentGateway('paystack', paystackKey);
 
-```typescript
+async function runPayment() {
+    const payload = {
+        email: "customer@example.com",
+        amount: 2000,
+        currency: 'NGN',
+        callback_url: "https://www.google.com",
+    };
+    // For more information and payload details, see the official Paystack docs https://paystack.com/docs/api/transaction/#initialize
+    try {
+        const payment = await provider.createPayment(payload);
+        console.log("Payment reference:", payment);
+    } catch (error) {
+        console.error("Error creating payment:", (error as Error).message);
+    }
+}
+
+async function verifyPayment() {
+    // For more info about verification of payment, see https://paystack.com/docs/api/transaction/#verify
+    const reference = "i3mg37nrys";
+    try {
+        const payment = await
+
+ provider.verifyPayment(reference);
+        console.log("Payment verification:", payment);
+    } catch (error) {
+        console.error("Error verifying payment:", (error as Error).message);
+    }
+}
+
 async function listPayments() {
-  const payments = await stripe.listPayments();
-  console.log(payments);
-}
-```
-
-### Retrieving Single Payment
-
-```typescript
-async function retrievePayment(paymentId: string) {
-  const payment = await stripe.retrieveSinglePayment(paymentId);
-  console.log(payment);
-}
-```
-
-## API
-
-### PaymentProvider Interface
-
-The `PaymentProvider` interface defines the methods that each payment provider must implement:
-
-```typescript
-export interface PaymentProvider {
-  createPayment(payload: object): Promise<string>;
-  verifyPayment(paymentId: string): Promise<boolean>;
-  listPayments(params: object): Promise<string>;
-  retrieveSinglePayment(paymentId: string): Promise<boolean>;
-}
-```
-
-### StripeProvider Class
-
-#### Methods
-
-- `createPayment(payload: Record<string, unknown>): Promise<any>`
-- `verifyPayment(sessionId: string): Promise<boolean>`
-- `listPayments(payload: Record<string, any> = {}): Promise<any>`
-- `retrieveSinglePayment(paymentId: string): Promise<any>`
-
-### PaystackProvider Class
-
-#### Methods
-
-- `createPayment(payload: Record<string, unknown>): Promise<string>`
-- `verifyPayment(paymentId: string): Promise<boolean>`
-- `listPayments(params: Record<string, any> = {}): Promise<any>`
-- `retrieveSinglePayment(paymentId: string): Promise<boolean>`
-
-## Configuration
-
-You can set the API keys for each payment provider by passing them to the constructor when creating an instance of `StripeProvider` or `PaystackProvider`.
-
-```typescript
-const stripe = new StripeProvider('your-stripe-api-key');
-const paystack = new PaystackProvider('your-paystack-api-key');
-```
-
-## Example
-
-Here is a complete example of how to use the package with both Stripe and Paystack:
-
-```typescript
-import { StripeProvider, PaystackProvider } from 'node-pay';
-
-const stripe = new StripeProvider('your-stripe-api-key');
-const paystack = new PaystackProvider('your-paystack-api-key');
-
-async function processStripePayment() {
-  const payload = {
-    payment_method_types: ['card'],
-    line_items: [
-      {
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: 'T-shirt',
-          },
-          unit_amount: 2000,
-        },
-        quantity: 1,
-      },
-    ],
-    mode: 'payment',
-    success_url: 'https://example.com/success',
-    cancel_url: 'https://example.com/cancel',
-  };
-
-  const payment = await stripe.createPayment(payload);
-  console.log(payment);
+    // Filter params for listPayments, more info here https://paystack.com/docs/api/transaction/#list
+    const params = {
+        perPage: 10,
+        page: 1,
+        status: 'success',
+        from: '2024-01-01T00:00:00.000Z',
+        to: '2024-01-31T23:59:59.000Z'
+    };
+    try {
+        const payments = await provider.listPayments(params);
+        console.log("Payment list:", payments);
+    } catch (error) {
+        console.error("Error listing payments:", (error as Error).message);
+    }
 }
 
-async function processPaystackPayment() {
-  const payload = {
-    email: 'customer@example.com',
-    amount: 2000,
-    currency: 'NGN',
-  };
-
-  const payment = await paystack.createPayment(payload);
-  console.log(payment);
+async function retrieveSinglePayment() {
+    // For more info about retrieving a single payment, see https://paystack.com/docs/api/transaction/#retrieve
+    const tranId = "3806666186";
+    try {
+        const payment = await provider.retrieveSinglePayment(tranId);
+        console.log("Payment details:", payment);
+    } catch (error) {
+        console.error("Error retrieving payment:", (error as Error).message);
+    }
 }
 
-processStripePayment();
-processPaystackPayment();
+// Call the functions
+runPayment();
+verifyPayment();
+listPayments();
+retrieveSinglePayment();
 ```
 
-## Contributing
+## Documentation
 
-Contributions are welcome! Please feel free to submit a pull request or open an issue.
+### Methods
+
+- **`createPayment(payload: object)`**
+  - **Description:** Initiates a payment request with the provided payload. 
+  - **Returns:** Payment reference object.
+
+- **`verifyPayment(reference: string)`**
+  - **Description:** Verifies the status of a payment using the provided reference or transaction ID or payement Id.
+  - **Returns:** Payment verification Boolean (true if paid else false).
+
+- **`listPayments(params: object)`**
+  - **Description:** Retrieves a list of payments based on the provided parameters.
+  - **Returns:** List of payments.
+
+- **`retrieveSinglePayment(transactionId: string)`**
+  - **Description:** Fetches details of a single payment using the transaction ID.
+  - **Returns:** Payment details.
+
+## Contribution
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## Contact
+
+Nwafor Glory - [GitHub](https://github.com/Nwafor6)
 
 ---
