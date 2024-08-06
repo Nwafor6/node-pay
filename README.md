@@ -1,5 +1,3 @@
-Certainly! I'll create a detailed README.md file for your `node-pay` package and update the `package.json` to better suit the package. Here's a professional README.md:
-
 ```markdown
 # node-pay
 
