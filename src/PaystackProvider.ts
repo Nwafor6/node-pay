@@ -1,4 +1,4 @@
-import { PaymentProvider } from './types';
+import { PaymentProvider } from '.';
 import https from 'https';
 
 export class PaystackProvider implements PaymentProvider {
@@ -6,7 +6,7 @@ export class PaystackProvider implements PaymentProvider {
 
   constructor(private readonly apiKey: string) {}
 
-  async createPayment(payload: Record<string, unknown>): Promise<string> {
+  async createPayment(payload: Record<string, unknown>): Promise<any> {
     try {
       const response = await this.makeRequest('/transaction/initialize', 'POST', payload);
       
@@ -24,9 +24,10 @@ export class PaystackProvider implements PaymentProvider {
     try {
       const path = `/transaction/verify/${paymentId}`;
       const response = await this.makeRequest(path, 'GET');
-      console.log(response, "Response from Paystack");
-
-      return response
+      if(response.data.status === "success"){
+        return true
+      }
+      return false
     } catch (error) {
       throw new Error(`Paystack payment verification failed: ${(error as Error).message}`);
     }
@@ -38,7 +39,6 @@ export class PaystackProvider implements PaymentProvider {
 
     try {
       const response = await this.makeRequest(path, 'GET');
-      console.log(response, "Response from Paystack");
 
       return response;
     } catch (error) {
@@ -46,11 +46,10 @@ export class PaystackProvider implements PaymentProvider {
     }
   };
 
-  async retrieveSinglePayment(paymentId: string): Promise<boolean> {
+  async retrieveSinglePayment(paymentId: string): Promise<any> {
     try {
       const path = `/transaction/${paymentId}`;
       const response = await this.makeRequest(path, 'GET');
-      console.log(response, "Response from Paystack");
 
       return response
     } catch (error) {
@@ -58,22 +57,6 @@ export class PaystackProvider implements PaymentProvider {
     }
   };
   
-  // async refundPayment(paymentId: string, amount: number,context:object={}): Promise<boolean> {
-  //   const data = {
-  //     transaction:paymentId,
-  //     amount,
-  //    ...context
-  //   };
-
-  //   try {
-  //     const response = await this.makeRequest('/refund', 'POST', data);
-  //     console.log(response, "Response from Paystack");
-
-  //     return response
-  //   } catch (error) {
-  //     throw new Error(`Paystack refund failed: ${(error as Error).message}`);
-  //   }
-  // };
 
   private makeRequest(path: string, method: string, data?: Record<string, unknown>): Promise<any> {
     return new Promise((resolve, reject) => {

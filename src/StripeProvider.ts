@@ -1,6 +1,5 @@
-import { PaymentProvider} from './types';
+import { PaymentProvider} from '.';
 import Stripe from 'stripe';
-import https from 'https';
 
 export class StripeProvider implements PaymentProvider {
     private readonly baseUrl = 'api.stripe.com';

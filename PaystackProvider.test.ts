@@ -97,7 +97,7 @@ describe('PaystackProvider', () => {
       });
 
       const result = await paystackProvider.verifyPayment(mockPaymentId);
-      expect(result).toEqual(mockResponse);
+      expect(result).toBe(true);
     });
   });
 
